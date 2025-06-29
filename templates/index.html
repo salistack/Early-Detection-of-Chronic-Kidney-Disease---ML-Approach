@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kidney Health Assessment</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto+Slab:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #1a73e8;
+            --secondary-blue: #4285f4;
+            --light-blue: #e8f0fe;
+            --dark-blue: #0d47a1;
+            --success-green: #28a745;
+            --warning-red: #dc3545;
+            --step-purple: #6a0dad;
+            --step-teal: #008080;
+            --light-bg: #f8f9fa;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0c2461, #1e3799, #4a69bd);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #333;
+            overflow-x: hidden;
+            position: relative;
+            font-size: 15px;
+        }
+        
+        /* Health-themed background animations */
+        .animation-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 15s infinite linear;
+        }
+        
+        .kidney-shape {
+            position: absolute;
+            width: 150px;
+            height: 75px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-top-left-radius: 110px;
+            border-top-right-radius: 110px;
+            border-bottom-left-radius: 100px;
+            border-bottom-right-radius: 100px;
+            animation: pulse 8s infinite ease-in-out;
+        }
+        
+        .cell {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: rgba(173, 216, 230, 0.3);
+            animation: drift 25s infinite linear;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 15px 0 25px;
+            width: 100%;
+            max-width: 1000px;
+            position: relative;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+        
+        .logo-icon {
+            font-size: 2.5rem;
+            color: white;
+            margin-right: 12px;
+            text-shadow: 0 0 12px rgba(255, 255, 255, 0.7);
+            animation: pulse 2s infinite;
+        }
+        
+        .logo h1 {
+            color: white;
+            font-size: 2.4rem;
+            font-weight: 700;
+            margin: 0;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 18px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+            padding: 25px;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .form-page {
+            display: none;
+            animation: fadeIn 0.6s ease;
+        }
+        
+        .form-page.active {
+            display: block;
+        }
+        
+        .form-section-title {
+            color: var(--primary-blue);
+            border-bottom: 2px solid var(--light-blue);
+            padding-bottom: 8px;
+            margin: 20px 0 12px;
+            font-weight: 600;
+            font-size: 1.3rem;
+        }
+        
+        .form-group label {
+            font-weight: 500;
+            color: #444;
+            margin-bottom: 6px;
+            font-size: 1rem;
+        }
+        
+        .form-control, .form-select {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 12px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            height: 45px;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 0.2rem rgba(26, 115, 232, 0.15);
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+        
+        .nav-btn {
+            background: linear-gradient(135deg, var(--primary-blue), var(--dark-blue));
+            color: white;
+            border: none;
+            border-radius: 45px;
+            padding: 10px 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(26, 115, 232, 0.4);
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+            gap: 8px;
+        }
+        
+        .step {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #777;
+            position: relative;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .step.active {
+            background: var(--primary-blue);
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .step.completed {
+            background: var(--success-green);
+            color: white;
+        }
+        
+        .step-label {
+            position: absolute;
+            bottom: -22px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            color: #555;
+            font-weight: 500;
+            width: 100px;
+            text-align: center;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .result-container {
+            display: none;
+            text-align: center;
+            padding: 35px 20px;
+            animation: scaleIn 0.8s ease;
+        }
+        
+        .emotion-icon {
+            font-size: 7rem;
+            margin-bottom: 25px;
+            animation: pulse 2s infinite;
+        }
+        
+        .positive {
+            color: var(--warning-red);
+        }
+        
+        .negative {
+            color: var(--success-green);
+        }
+        
+        .result-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            animation: fadeInUp 0.8s ease;
+        }
+        
+        .result-message {
+            font-size: 1.2rem;
+            line-height: 1.7;
+            margin-bottom: 30px;
+            max-width: 750px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeIn 1s ease;
+            padding: 0 15px;
+        }
+        
+        .back-btn {
+            background: linear-gradient(135deg, var(--primary-blue), var(--dark-blue));
+            color: white;
+            border: none;
+            border-radius: 45px;
+            padding: 12px 35px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(26, 115, 232, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            animation: fadeInUp 1.2s ease;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 18px rgba(26, 115, 232, 0.5);
+        }
+        
+        .input-group {
+            position: relative;
+        }
+        
+        .input-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+            font-size: 0.95rem;
+        }
+        
+        .form-note {
+            background: var(--light-blue);
+            border-left: 4px solid var(--primary-blue);
+            padding: 12px;
+            border-radius: 0 6px 6px 0;
+            margin: 15px 0;
+            font-size: 0.95rem;
+        }
+        
+        .footer {
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            padding: 15px;
+            width: 100%;
+            max-width: 1000px;
+            font-size: 0.85rem;
+            margin-top: 20px;
+        }
+        
+        .error {
+            border-color: var(--warning-red) !important;
+        }
+        
+        .error-message {
+            color: var(--warning-red);
+            font-size: 0.85rem;
+            margin-top: 4px;
+            display: none;
+        }
+        
+        /* Kidney diagram for results */
+        .kidney-diagram {
+            width: 180px;
+            height: 90px;
+            border: 3px solid currentColor;
+            border-top-left-radius: 110px;
+            border-top-right-radius: 110px;
+            border-bottom-left-radius: 100px;
+            border-bottom-right-radius: 100px;
+            margin: 0 auto 25px;
+            position: relative;
+            animation: pulse 3s infinite;
+        }
+        
+        .kidney-diagram::before {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 60px;
+            border: 2px solid currentColor;
+            border-radius: 50%;
+            top: 15px;
+            left: -30px;
+        }
+        
+        .kidney-diagram::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 80px;
+            border: 2px solid currentColor;
+            border-radius: 50%;
+            top: 5px;
+            right: -20px;
+        }
+        
+        /* Emotional animation */
+        .sad-animation {
+            animation: sadPulse 3s infinite;
+        }
+        
+        .happy-animation {
+            animation: happyJump 2s infinite;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.7;
+            }
+            50% {
+                transform: scale(1.03);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0.7;
+            }
+        }
+        
+        @keyframes sadPulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+        }
+        
+        @keyframes happyJump {
+            0% {
+                transform: translateY(0) scale(1);
+            }
+            25% {
+                transform: translateY(-20px) scale(1.1);
+            }
+            50% {
+                transform: translateY(0) scale(1);
+            }
+            75% {
+                transform: translateY(-10px) scale(1.05);
+            }
+            100% {
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+                opacity: 0.2;
+            }
+            100% {
+                transform: translateY(-800px) translateX(800px) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes drift {
+            0% {
+                transform: translateX(0) translateY(0);
+            }
+            25% {
+                transform: translateX(80px) translateY(-40px);
+            }
+            50% {
+                transform: translateX(160px) translateY(0);
+            }
+            75% {
+                transform: translateX(80px) translateY(40px);
+            }
+            100% {
+                transform: translateX(0) translateY(0);
+            }
+        }
+        
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.85);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .logo h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 18px 12px;
+            }
+            
+            .emotion-icon {
+                font-size: 5rem;
+            }
+            
+            .result-title {
+                font-size: 1.9rem;
+            }
+            
+            .result-message {
+                font-size: 1.05rem;
+            }
+            
+            .step-label {
+                font-size: 0.7rem;
+                bottom: -20px;
+                width: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background Elements -->
+    <div class="animation-bg">
+        <div class="kidney-shape" style="top: 10%; left: 5%;"></div>
+        <div class="kidney-shape" style="top: 10%; right: 5%; transform: scaleX(-1);"></div>
+        <div class="bubble" style="width: 70px; height: 70px; top: 20%; left: 20%; animation-delay: 0s;"></div>
+        <div class="bubble" style="width: 100px; height: 100px; top: 60%; left: 70%; animation-delay: -5s;"></div>
+        <div class="bubble" style="width: 50px; height: 50px; top: 40%; left: 40%; animation-delay: -10s;"></div>
+        <div class="cell" style="top: 30%; left: 80%; animation-delay: -2s;"></div>
+        <div class="cell" style="top: 70%; left: 30%; animation-delay: -8s;"></div>
+        <div class="cell" style="top: 50%; left: 60%; animation-delay: -15s;"></div>
+    </div>
+    
+    <div class="header">
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fas fa-heartbeat"></i>
+            </div>
+            <h1>Kidney Health Predictor</h1>
+        </div>
+        <p>Assess your kidney health through our step-by-step analysis</p>
+    </div>
+    
+    <div class="container">
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+            <div class="step active" id="step1">
+                1
+                <div class="step-label"></div>
+            </div>
+            <div class="step" id="step2">
+                2
+                <div class="step-label"></div>
+            </div>
+            <div class="step" id="step3">
+                3
+                <div class="step-label"></div>
+            </div>
+            <div class="step" id="step4">
+                4
+                <div class="step-label"></div>
+            </div>
+        </div>
+        
+        <!-- Form Pages -->
+        <div class="form-page active" id="page1">
+            <h3 class="form-section-title">Personal Information</h3>
+            
+            <div class="form-note">
+                <i class="fas fa-info-circle"></i> Please provide accurate information for the most reliable prediction.
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Age</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" id="age" name="age" min="1" max="120" placeholder="Enter your age" required>
+                        <span class="input-icon"><i class="fas fa-user"></i></span>
+                    </div>
+                    <div class="error-message" id="ageError">Please enter a valid age (1-120)</div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Blood Pressure (mmHg)</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" id="blood_pressure" name="blood_pressure" min="50" max="250" placeholder="e.g. 120" required>
+                        <span class="input-icon"><i class="fas fa-heartbeat"></i></span>
+                    </div>
+                    <div class="error-message" id="bpError">Please enter a valid blood pressure (50-250)</div>
+                </div>
+            </div>
+            
+            <div class="nav-buttons">
+                <div></div> <!-- Empty div for spacing -->
+                <button type="button" class="nav-btn" id="nextToPage2">
+                    Next <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="form-page" id="page2">
+            <h3 class="form-section-title">Kidney Function Tests</h3>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Specific Gravity</label>
+                    <div class="input-group">
+                        <input type="number" step="0.001" class="form-control" id="specific_gravity" name="specific_gravity" min="1.000" max="1.050" placeholder="e.g. 1.020" required>
+                        <span class="input-icon"><i class="fas fa-vial"></i></span>
+                    </div>
+                    <div class="error-message" id="sgError">Please enter a value between 1.000 and 1.050</div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Albumin (g/dL)</label>
+                    <div class="input-group">
+                        <input type="number" step="0.1" class="form-control" id="albumin" name="albumin" min="0" max="10" placeholder="e.g. 0.5" required>
+                        <span class="input-icon"><i class="fas fa-prescription-bottle"></i></span>
+                    </div>
+                    <div class="error-message" id="albuminError">Please enter a value between 0 and 10</div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Blood Glucose (mg/dL)</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" id="blood_glucose_random" name="blood_glucose_random" min="50" max="500" placeholder="e.g. 120" required>
+                        <span class="input-icon"><i class="fas fa-tint"></i></span>
+                    </div>
+                    <div class="error-message" id="glucoseError">Please enter a value between 50 and 500</div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Blood Urea (mg/dL)</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" id="blood_urea" name="blood_urea" min="0" max="300" placeholder="e.g. 25" required>
+                        <span class="input-icon"><i class="fas fa-flask"></i></span>
+                    </div>
+                    <div class="error-message" id="ureaError">Please enter a value between 0 and 300</div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Serum Creatinine (mg/dL)</label>
+                    <div class="input-group">
+                        <input type="number" step="0.1" class="form-control" id="serum_creatinine" name="serum_creatinine" min="0.1" max="20" placeholder="e.g. 0.9" required>
+                        <span class="input-icon"><i class="fas fa-prescription"></i></span>
+                    </div>
+                    <div class="error-message" id="creatinineError">Please enter a value between 0.1 and 20</div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Sodium (mEq/L)</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" id="sodium" name="sodium" min="100" max="200" placeholder="e.g. 140" required>
+                        <span class="input-icon"><i class="fas fa-atom"></i></span>
+                    </div>
+                    <div class="error-message" id="sodiumError">Please enter a value between 100 and 200</div>
+                </div>
+            </div>
+            
+            <div class="nav-buttons">
+                <button type="button" class="nav-btn" id="backToPage1">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+                <button type="button" class="nav-btn" id="nextToPage3">
+                    Next <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="form-page" id="page3">
+            <h3 class="form-section-title">Blood Cell Counts & Analysis</h3>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">White Blood Cell Count (cells/cumm)</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" id="white_blood_cell_count" name="white_blood_cell_count" min="1000" max="50000" placeholder="e.g. 7500" required>
+                        <span class="input-icon"><i class="fas fa-microscope"></i></span>
+                    </div>
+                    <div class="error-message" id="wbccError">Please enter a value between 1000 and 50000</div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Red Blood Cell Count (million/cumm)</label>
+                    <div class="input-group">
+                        <input type="number" step="0.1" class="form-control" id="red_blood_cell_count" name="red_blood_cell_count" min="1" max="10" placeholder="e.g. 4.5" required>
+                        <span class="input-icon"><i class="fas fa-microscope"></i></span>
+                    </div>
+                    <div class="error-message" id="rbccError">Please enter a value between 1 and 10</div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Red Blood Cells</label>
+                    <select class="form-select" id="red_blood_cells" name="red_blood_cells" required>
+                        <option value="0">Normal</option>
+                        <option value="1">Abnormal</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Pus Cell</label>
+                    <select class="form-select" id="pus_cell" name="pus_cell" required>
+                        <option value="0">Normal</option>
+                        <option value="1">Abnormal</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Pus Cell Clumps</label>
+                    <select class="form-select" id="pus_cell_clumps" name="pus_cell_clumps" required>
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Packed Cell Volume (%)</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" id="packed_cell_volume" name="packed_cell_volume" min="0" max="70" placeholder="e.g. 42" required>
+                        <span class="input-icon"><i class="fas fa-percentage"></i></span>
+                    </div>
+                    <div class="error-message" id="pcvError">Please enter a value between 0 and 70</div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Anemia</label>
+                    <select class="form-select" id="anemia" name="anemia" required>
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="nav-buttons">
+                <button type="button" class="nav-btn" id="backToPage2">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+                <button type="button" class="nav-btn" id="nextToPage4">
+                    Next <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="form-page" id="page4">
+            <h3 class="form-section-title">Health Conditions</h3>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Hypertension</label>
+                    <select class="form-select" id="hypertension" name="hypertension" required>
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Diabetes Mellitus</label>
+                    <select class="form-select" id="diabetes_mellitus" name="diabetes_mellitus" required>
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Coronary Artery Disease</label>
+                    <select class="form-select" id="coronary_artery_disease" name="coronary_artery_disease" required>
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Appetite</label>
+                    <select class="form-select" id="appetite" name="appetite" required>
+                        <option value="1">Good</option>
+                        <option value="0">Poor</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Pedal Edema</label>
+                    <select class="form-select" id="peda_edema" name="peda_edema" required>
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Bacteria</label>
+                    <select class="form-select" id="bacteria" name="bacteria" required>
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Potassium (mEq/L)</label>
+                    <div class="input-group">
+                        <input type="number" step="0.1" class="form-control" id="potassium" name="potassium" min="1" max="10" placeholder="e.g. 4.0" required>
+                        <span class="input-icon"><i class="fas fa-battery-full"></i></span>
+                    </div>
+                    <div class="error-message" id="potassiumError">Please enter a value between 1 and 10</div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Hemoglobin (g/dL)</label>
+                    <div class="input-group">
+                        <input type="number" step="0.1" class="form-control" id="hemoglobin" name="hemoglobin" min="0" max="30" placeholder="e.g. 14.5" required>
+                        <span class="input-icon"><i class="fas fa-tint"></i></span>
+                    </div>
+                    <div class="error-message" id="hemoglobinError">Please enter a value between 0 and 30</div>
+                </div>
+            </div>
+            
+            <div class="nav-buttons">
+                <button type="button" class="nav-btn" id="backToPage3">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+                <button type="button" class="nav-btn" id="predictBtn">
+                    <i class="fas fa-heartbeat"></i> Predict CKD
+                </button>
+            </div>
+        </div>
+        
+        <!-- Results Section -->
+        <div class="result-container" id="resultSection">
+            <div class="kidney-diagram" id="kidneyDiagram"></div>
+            <div id="emotionIcon" class="emotion-icon"></div>
+            <h2 class="result-title" id="resultTitle">Prediction Result</h2>
+            <div class="result-message" id="resultMessage"></div>
+            <button class="back-btn" id="backBtn">
+                <i class="fas fa-redo"></i> Start Over
+            </button>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>This tool provides a prediction based on the information entered. It is not a substitute for professional medical advice.</p>
+        <p>© 2023 Kidney Health Predictor | All Rights Reserved</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Page navigation elements
+            const pages = {
+                page1: document.getElementById('page1'),
+                page2: document.getElementById('page2'),
+                page3: document.getElementById('page3'),
+                page4: document.getElementById('page4'),
+                result: document.getElementById('resultSection')
+            };
+            
+            const steps = {
+                step1: document.getElementById('step1'),
+                step2: document.getElementById('step2'),
+                step3: document.getElementById('step3'),
+                step4: document.getElementById('step4')
+            };
+            
+            // Navigation buttons
+            const nextToPage2 = document.getElementById('nextToPage2');
+            const nextToPage3 = document.getElementById('nextToPage3');
+            const nextToPage4 = document.getElementById('nextToPage4');
+            const backToPage1 = document.getElementById('backToPage1');
+            const backToPage2 = document.getElementById('backToPage2');
+            const backToPage3 = document.getElementById('backToPage3');
+            const predictBtn = document.getElementById('predictBtn');
+            const backBtn = document.getElementById('backBtn');
+            const kidneyDiagram = document.getElementById('kidneyDiagram');
+            const emotionIcon = document.getElementById('emotionIcon');
+            
+            // Navigation functions
+            function goToPage(pageId) {
+                // Hide all pages
+                Object.values(pages).forEach(page => {
+                    if (page.classList.contains('form-page')) {
+                        page.classList.remove('active');
+                    } else {
+                        page.style.display = 'none';
+                    }
+                });
+                
+                // Show the requested page
+                if (pageId === 'result') {
+                    pages.result.style.display = 'block';
+                } else {
+                    document.getElementById(pageId).classList.add('active');
+                }
+            }
+            
+            function updateStepIndicator(activeStep) {
+                // Reset all steps
+                Object.values(steps).forEach(step => {
+                    step.classList.remove('active', 'completed');
+                });
+                
+                // Update steps based on active page
+                switch(activeStep) {
+                    case 'page1':
+                        steps.step1.classList.add('active');
+                        break;
+                    case 'page2':
+                        steps.step1.classList.add('completed');
+                        steps.step2.classList.add('active');
+                        break;
+                    case 'page3':
+                        steps.step1.classList.add('completed');
+                        steps.step2.classList.add('completed');
+                        steps.step3.classList.add('active');
+                        break;
+                    case 'page4':
+                        steps.step1.classList.add('completed');
+                        steps.step2.classList.add('completed');
+                        steps.step3.classList.add('completed');
+                        steps.step4.classList.add('active');
+                        break;
+                }
+            }
+            
+            // Navigation event listeners
+            nextToPage2.addEventListener('click', function() {
+                if (validatePage1()) {
+                    goToPage('page2');
+                    updateStepIndicator('page2');
+                }
+            });
+            
+            nextToPage3.addEventListener('click', function() {
+                if (validatePage2()) {
+                    goToPage('page3');
+                    updateStepIndicator('page3');
+                }
+            });
+            
+            nextToPage4.addEventListener('click', function() {
+                if (validatePage3()) {
+                    goToPage('page4');
+                    updateStepIndicator('page4');
+                }
+            });
+            
+            backToPage1.addEventListener('click', function() {
+                goToPage('page1');
+                updateStepIndicator('page1');
+            });
+            
+            backToPage2.addEventListener('click', function() {
+                goToPage('page2');
+                updateStepIndicator('page2');
+            });
+            
+            backToPage3.addEventListener('click', function() {
+                goToPage('page3');
+                updateStepIndicator('page3');
+            });
+            
+            // Back to form button
+            backBtn.addEventListener('click', function() {
+                goToPage('page1');
+                updateStepIndicator('page1');
+            });
+            
+            // Form validation functions
+            function validatePage1() {
+                let isValid = true;
+                
+                // Reset errors
+                document.querySelectorAll('.error-message').forEach(error => {
+                    error.style.display = 'none';
+                });
+                document.querySelectorAll('.form-control').forEach(input => {
+                    input.classList.remove('error');
+                });
+                
+                // Validate age
+                const age = document.getElementById('age');
+                const ageValue = parseInt(age.value);
+                if (isNaN(ageValue) || ageValue < 1 || ageValue > 120) {
+                    age.classList.add('error');
+                    document.getElementById('ageError').style.display = 'block';
+                    isValid = false;
+                }
+                
+                // Validate blood pressure
+                const bp = document.getElementById('blood_pressure');
+                const bpValue = parseInt(bp.value);
+                if (isNaN(bpValue) || bpValue < 50 || bpValue > 250) {
+                    bp.classList.add('error');
+                    document.getElementById('bpError').style.display = 'block';
+                    isValid = false;
+                }
+                
+                return isValid;
+            }
+            
+            function validatePage2() {
+                let isValid = true;
+                
+                // Reset errors
+                document.querySelectorAll('.error-message').forEach(error => {
+                    error.style.display = 'none';
+                });
+                document.querySelectorAll('.form-control').forEach(input => {
+                    input.classList.remove('error');
+                });
+                
+                // Validate specific gravity
+                const sg = document.getElementById('specific_gravity');
+                const sgValue = parseFloat(sg.value);
+                if (isNaN(sgValue) || sgValue < 1.000 || sgValue > 1.050) {
+                    sg.classList.add('error');
+                    document.getElementById('sgError').style.display = 'block';
+                    isValid = false;
+                }
+                
+                // Validate albumin
+                const albumin = document.getElementById('albumin');
+                const albuminValue = parseFloat(albumin.value);
+                if (isNaN(albuminValue) || albuminValue < 0 || albuminValue > 10) {
+                    albumin.classList.add('error');
+                    document.getElementById('albuminError').style.display = 'block';
+                    isValid = false;
+                }
+                
+                // Validate glucose
+                const glucose = document.getElementById('blood_glucose_random');
+                const glucoseValue = parseInt(glucose.value);
+                if (isNaN(glucoseValue) || glucoseValue < 50 || glucoseValue > 500) {
+                    glucose.classList.add('error');
+                    document.getElementById('glucoseError').style.display = 'block';
+                    isValid = false;
+                }
+                
+                // Validate blood urea
+                const urea = document.getElementById('blood_urea');
+                const ureaValue = parseInt(urea.value);
+                if (isNaN(ureaValue) || ureaValue < 0 || ureaValue > 300) {
+                    urea.classList.add('error');
+                    document.getElementById('ureaError').style.display = 'block';
+                    isValid = false;
+                }
+                
+                // Validate serum creatinine
+                const creatinine = document.getElementById('serum_creatinine');
+                const creatinineValue = parseFloat(creatinine.value);
+                if (isNaN(creatinineValue) || creatinineValue < 0.1 || creatinineValue > 20) {
+                    creatinine.classList.add('error');
+                    document.getElementById('creatinineError').style.display = 'block';
+                    isValid = false;
+                }
+                
+                // Validate sodium
+                const sodium = document.getElementById('sodium');
+                const sodiumValue = parseInt(sodium.value);
+                if (isNaN(sodiumValue) || sodiumValue < 100 || sodiumValue > 200) {
+                    sodium.classList.add('error');
+                    document.getElementById('sodiumError').style.display = 'block';
+                    isValid = false;
+                }
+                
+                return isValid;
+            }
+            
+            function validatePage3() {
+                let isValid = true;
+                
+                // Reset errors
+                document.querySelectorAll('.error-message').forEach(error => {
+                    error.style.display = 'none';
+                });
+                document.querySelectorAll('.form-control').forEach(input => {
+                    input.classList.remove('error');
+                });
+                
+                // Validate white blood cell count
+                const wbcc = document.getElementById('white_blood_cell_count');
+                const wbccValue = parseInt(wbcc.value);
+                if (isNaN(wbccValue) || wbccValue < 1000 || wbccValue > 50000) {
+                    wbcc.classList.add('error');
+                    document.getElementById('wbccError').style.display = 'block';
+                    isValid = false;
+                }
+                
+                // Validate red blood cell count
+                const rbcc = document.getElementById('red_blood_cell_count');
+                const rbccValue = parseFloat(rbcc.value);
+                if (isNaN(rbccValue) || rbccValue < 1 || rbccValue > 10) {
+                    rbcc.classList.add('error');
+                    document.getElementById('rbccError').style.display = 'block';
+                    isValid = false;
+                }
+                
+                // Validate packed cell volume
+                const pcv = document.getElementById('packed_cell_volume');
+                const pcvValue = parseInt(pcv.value);
+                if (isNaN(pcvValue) || pcvValue < 0 || pcvValue > 70) {
+                    pcv.classList.add('error');
+                    document.getElementById('pcvError').style.display = 'block';
+                    isValid = false;
+                }
+                
+                return isValid;
+            }
+            
+            function validatePage4() {
+                let isValid = true;
+                
+                // Reset errors
+                document.querySelectorAll('.error-message').forEach(error => {
+                    error.style.display = 'none';
+                });
+                document.querySelectorAll('.form-control').forEach(input => {
+                    input.classList.remove('error');
+                });
+                
+                // Validate potassium
+                const potassium = document.getElementById('potassium');
+                const potassiumValue = parseFloat(potassium.value);
+                if (isNaN(potassiumValue) || potassiumValue < 1 || potassiumValue > 10) {
+                    potassium.classList.add('error');
+                    document.getElementById('potassiumError').style.display = 'block';
+                    isValid = false;
+                }
+                
+                // Validate hemoglobin
+                const hemoglobin = document.getElementById('hemoglobin');
+                const hemoglobinValue = parseFloat(hemoglobin.value);
+                if (isNaN(hemoglobinValue) || hemoglobinValue < 0 || hemoglobinValue > 30) {
+                    hemoglobin.classList.add('error');
+                    document.getElementById('hemoglobinError').style.display = 'block';
+                    isValid = false;
+                }
+                
+                return isValid;
+            }
+            
+            // Prediction button
+            predictBtn.addEventListener('click', function() {
+                if (validatePage4()) {
+                    // Simulate processing
+                    predictBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+                    predictBtn.disabled = true;
+                    
+                    // Simulate API call delay
+                    setTimeout(() => {
+                        // Generate random result for demo
+                        const isPositive = Math.random() > 0.6;
+                        
+                        // Show results
+                        goToPage('result');
+                        
+                        const resultTitle = document.getElementById('resultTitle');
+                        const resultMessage = document.getElementById('resultMessage');
+                        
+                        if (isPositive) {
+                            // Disease detected - show sad face
+                            emotionIcon.innerHTML = '<i class="fas fa-sad-tear"></i>';
+                           
+                            
+                        
+                            
+                            resultTitle.textContent = 'Potential Kidney Disease Detected';
+                            resultTitle.className = 'result-title positive';
+                            resultMessage.innerHTML = `
+                                <p class="mb-3"><strong>Based on your health information:</strong></p>
+                                <div class="alert alert-danger" role="alert">
+                                    <i class="fas fa-exclamation-circle me-2"></i> 
+                                    Our analysis indicates a <strong>high probability</strong> of Chronic Kidney Disease (CKD)
+                                </div>
+                                <p class="mt-3"><strong>Recommendations:</strong></p>
+                                <ul class="text-start mx-auto" style="max-width: 600px;">
+                                    <li>Consult with a nephrologist as soon as possible</li>
+                                    <li>Schedule comprehensive kidney function tests</li>
+                                    <li>Monitor your blood pressure regularly</li>
+                                    <li>Follow a kidney-healthy diet</li>
+                                </ul>
+                                <p class="mt-3">Early intervention can significantly improve outcomes and slow disease progression.</p>
+                            `;
+                        } else {
+                            // No disease detected - show happy face
+                            emotionIcon.innerHTML = '<i class="fas fa-smile-beam"></i>';
+                            
+
+                            resultTitle.textContent = 'No Kidney Disease Detected';
+                            resultTitle.className = 'result-title negative';
+                            resultMessage.innerHTML = `
+                                <p class="mb-3"><strong>Based on your health information:</strong></p>
+                                <div class="alert alert-success" role="alert">
+                                    <i class="fas fa-check-circle me-2"></i> 
+                                    Our analysis indicates a <strong>low probability</strong> of Chronic Kidney Disease (CKD)
+                                </div>
+                                <p class="mt-4">This is great news! However, we recommend:</p>
+                                <ul class="text-start mx-auto" style="max-width: 600px;">
+                                    <li>Maintaining regular health check-ups</li>
+                                    <li>Following a kidney-healthy lifestyle</li>
+                                    <li>Staying hydrated with water daily</li>
+                                    <li>Monitoring kidney health through annual exams</li>
+                                </ul>
+                            `;
+                        }
+                        
+                        // Reset button
+                        predictBtn.innerHTML = '<i class="fas fa-heartbeat"></i> Predict CKD';
+                        predictBtn.disabled = false;
+                    }, 2000);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
